@@ -1,0 +1,285 @@
+@keyframes slidein {
+    from {
+        transform: scale(0);
+        height: 0;
+    }
+
+    to {
+        transform: scale(100%);
+        height: 64px;
+    }
+}
+
+@keyframes wiggle {
+    from {
+        transform: translateX(-10px);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+a {
+    color: lightblue;
+}
+
+body {
+    background-color: #181818;
+    color: white;
+    text-align: center;
+    font-family: Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+}
+
+main {
+    max-width: 500px;
+    margin: auto;
+    padding: 10px;
+}
+
+button, select {
+    background: none;
+    color: white;
+    border: 2px solid white;
+    font-weight: bold;
+    transition: 0.25s;
+    padding: 10px;
+}
+
+option {
+    background: #181818;
+}
+
+button:disabled {
+    background: gray;
+    cursor: not-allowed;
+}
+
+section {
+    margin: 20px 0;
+}
+
+#board {
+    display: flex;
+    flex-direction: column;
+    font-family: monospace;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+#board div {
+    animation: 0.25s slidein;
+}
+
+footer {
+    margin-top: auto;
+    text-align: left;
+    margin: auto 0 15px 15px;
+}
+
+#board span {
+    border: 2px solid white;
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.25s;
+}
+
+#buttons {
+    margin-top: 5px;
+}
+
+#buttons button {
+    width: 35px;
+    height: 35px;
+    padding: 0;
+}
+
+#submit {
+    margin-top: 25px;
+}
+
+#submit:disabled:after {
+    content: ' (Invalid Score)';
+}
+
+#game-over {
+    border: 2px solid white;
+    padding-bottom: 20px;
+    width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#game-over .shown {
+    max-height: 160px;
+}
+
+#tutorial {
+    animation: 0.5s infinite alternate wiggle ease-in-out;
+    position: absolute;
+    font-weight: bold;
+    pointer-events: none;
+    transition: 0.25s;
+}
+
+#tutorial-wrapper {
+    position: relative;
+    top: 10px;
+    left: -160px;
+}
+
+#tooltip {
+    border: 1px solid white;
+    border-radius: 50%;
+    padding: 3px 6px;
+    position: relative;
+    font-size: 12px;
+    top: -3px;
+    cursor: pointer;
+}
+
+.popup {
+    background-color: #181818;
+    border: 2px solid white;
+    position: fixed;
+    padding: 15px;
+    top: 10px;
+    left: 10px;
+    text-align: left;
+}
+
+.popup h2, #tooltip-popup p {
+    margin: 0;
+}
+
+#keyboard {
+    margin-bottom: 20px;
+}
+
+#keyboard span {
+    transition: 0.25s;
+}
+
+#info-button {
+    color: #2785fd;
+}
+
+#settings-button {
+    cursor: pointer;
+}
+
+#share {
+    margin-bottom: 15px;
+}
+
+#score-wrapper {
+    font-size: larger;
+}
+
+#message {
+    font-size: medium;
+}
+
+.thought-bubble-container {
+    width: 160px;
+    margin: auto;
+    text-align: left;
+    font-size: 25px;
+}
+
+.thought-bubble-container > div {
+    background-color: white;
+    border-radius: 25px;
+    color: black;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.thought-bubble-container .main {
+    width: 160px;
+    height: 75px;
+    display: flex;
+    box-sizing: border-box;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.thought-bubble-container .medium {
+    width: 35px;
+    height: 15px;
+    margin-left: 20px;
+}
+
+.thought-bubble-container .small {
+    width: 15px;
+    height: 15px;
+    margin-left: 15px;
+}
+
+.hidden, .shown {
+    overflow: hidden;
+    transition: 0.25s;
+}
+
+.hidden {
+    transform: scale(0);
+    max-height: 0;
+    padding: 0 !important;
+}
+
+.shown {
+    transform: scale(100%);
+}
+
+.yellow {
+    background-color: #919101 !important;
+}
+
+.green {
+    background-color: #067306 !important;
+}
+
+.high-contrast .yellow {
+    background-color: #0082a4 !important;
+}
+
+.high-contrast .green {
+    background-color: #bd3502 !important;
+}
+
+.letter {
+    color: white;
+    font-weight: bold;
+}
+
+.letter-used {
+    color: gray;
+    font-variant-numeric: tabular-nums;
+}
+
+.letter-yellow {
+    color: #eaea54;
+}
+
+.letter-green {
+    color: #3fcb3f;
+}
+
+.high-contrast .letter-yellow {
+    color: #08efe2;
+}
+
+.high-contrast .letter-green {
+    color: #f3500f;
+}
