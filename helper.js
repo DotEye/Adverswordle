@@ -225,6 +225,7 @@ function gameOver(win) {
     scoreElement.innerText = score.toString();
     messageElement.innerText = getMessage(score);
     controlsElement.className = 'hidden';
+    whyDidILosePopupButtonElement.style.display = win ? 'none' : 'unset';
 
     if (score > Number(getStorage('high-score'))) setStorage('high-score', score.toString());
     highScoreElement.innerText = getStorage('high-score') ?? 'Unavailable';
@@ -316,6 +317,39 @@ function chooseWordAndUpdateLettersLeft(history, first) {
     });
 
     return word;
+}
+
+function updateWhyDidILose() {
+    const thinkingOf = whyDidILoseInputElement.value.toUpperCase();
+    if (thinkingOf.length !== 5) return whyDidILoseOutputElement.innerText = `"${thinkingOf}" is not 5 characters long.`;
+    if (!allWords.includes(thinkingOf)) return whyDidILoseOutputElement.innerText = `"${thinkingOf}" is not in the dictionary.`;
+
+    const history = getHistory();
+    for (const {word, score} of history) {
+        for (let i = 0; i < 5; ++i) {
+            let result;
+
+            if (word[i] === thinkingOf[i]) {
+                if (score[i] !== 'green') result = `scored as in the correct position (${getEmoji('green')})`;
+            }
+            else {
+                if (thinkingOf.includes(word[i]) && score[i] !== 'yellow') result = `scored as in the word but not in the correct position (${getEmoji('yellow')})`;
+                else if (!thinkingOf.includes(word[i]) && score[i] !== '') result = `left blank (${getEmoji('')})`;
+            }
+
+            if (result !== undefined) {
+                whyDidILoseOutputElement.innerText = `For "${thinkingOf}" to be a valid word, the "${word[i]}" in ${word} should have been ${result}.`;
+                return;
+            }
+        }
+    }
+}
+
+
+function hidePopups() {
+    tooltipPopupElement.className = 'hidden popup';
+    settingsPopupElement.className = 'hidden popup';
+    whyDidILosePopupElement.className = 'hidden popup';
 }
 
 function randomChoice(array) {

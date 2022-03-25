@@ -58,6 +58,16 @@
             </select>
             <div>High Score: <strong id="high-score">0</strong></div>
             <div id="time-left"></div>
+            <button id="why-did-i-lose-popup-button"> Why did I lose?</button>
+        </div>
+
+        <div id="why-did-i-lose-popup" class="hidden popup">
+            <h2>Why did I lose?</h2>
+            <p>Enter the word you thought was valid.</p>
+            <input id="why-did-i-lose-input" maxlength="5" />
+            <button id="why-did-i-lose-button">Tell me why I lost</button>
+            <p id="why-did-i-lose-output">You lost because...</p>
+            <button class="done-button">Done</button>
         </div>
 
         <div id="tooltip-popup" class="hidden popup">
@@ -69,6 +79,8 @@
             <p>10-11 = Amazing!</p>
             <p>12-13 = Incredible!!</p>
             <p>>13 = Genius!!!</p>
+            <br>
+            <button class="done-button">Done</button>
         </div>
 
         <div id="settings-popup" class="hidden popup">
@@ -79,7 +91,7 @@
                     <input type="checkbox" id="high-contrast-mode" />
                 </label>
             </p>
-            <button id="settings-done">Done</button>
+            <button class="done-button">Done</button>
         </div>
 
         <section>

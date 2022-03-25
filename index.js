@@ -13,13 +13,17 @@ const tooltipPopupElement = document.getElementById('tooltip-popup');
 const settingsButtonElement = document.getElementById('settings-button');
 const settingsPopupElement = document.getElementById('settings-popup');
 const highContrastModeElement = document.getElementById('high-contrast-mode');
-const settingsDoneElement = document.getElementById('settings-done');
 const controlsElement = document.getElementById('controls');
 const timeLeftElement = document.getElementById('time-left');
 const highScoreElement = document.getElementById('high-score');
+const whyDidILosePopupButtonElement = document.getElementById('why-did-i-lose-popup-button');
+const whyDidILosePopupElement = document.getElementById('why-did-i-lose-popup');
+const whyDidILoseInputElement = document.getElementById('why-did-i-lose-input');
+const whyDidILoseButtonElement = document.getElementById('why-did-i-lose-button');
+const whyDidILoseOutputElement = document.getElementById('why-did-i-lose-output');
 
 const letterColors = ['', 'yellow', 'green'];
-const launchDate = new Date(2022, 2, 6);
+const launchDate = new Date(2022, 2, 5, 0, 0, 0, 0);
 const puzzleNumber = Math.floor((new Date() - launchDate) / (24 * 60 * 60 * 1000));
 
 const buttons = Array.from(document.getElementById('buttons').children);
@@ -34,6 +38,8 @@ buttons.forEach(element => {
     }
 });
 
+document.querySelectorAll('.done-button').forEach(element => element.onclick = hidePopups);
+
 submitButtonElement.onclick = () => {
     displayWord(getWordFromButtons());
 
@@ -41,7 +47,7 @@ submitButtonElement.onclick = () => {
     setStorage('history', JSON.stringify(history));
 
     finishWordUpdate(history);
-}
+};
 
 shareButtonElement.onchange = (event) => {
     const spoilerType = event.target.value;
@@ -50,39 +56,48 @@ shareButtonElement.onchange = (event) => {
     for (const [index, element] of Object.entries(boardElement.childNodes)) {
         const score = Array.from(element.childNodes).map(el => getEmoji(el.className)).join('');
         text += `${wrapWithSpoilers(score, spoilerType)} ${index === '0' ? element.innerText : wrapWithSpoilers(element.innerText, spoilerType)}\n`;
+        if (spoilerType === 'Reddit Spoilers') text += '\n';
     }
     text += `\n${wrapWithBold('Score', spoilerType)}: ${scoreElement.innerText}`;
 
     shareText(text, spoilerType);
     shareButtonElement.selectedIndex = 0;
-}
+};
 
 tooltipElement.onclick = (event) => {
     tooltipPopupElement.className = (tooltipPopupElement.className.includes('shown') ? 'hidden' : 'shown') + ' popup';
     event.stopPropagation();
-}
+};
 
 settingsButtonElement.onclick = (event) => {
     settingsPopupElement.className = (settingsPopupElement.className.includes('shown') ? 'hidden' : 'shown') + ' popup';
     event.stopPropagation();
-}
+};
 
-document.body.onclick = () => {
-    tooltipPopupElement.className = 'hidden popup';
-    settingsPopupElement.className = 'hidden popup';
-}
+document.body.onclick = hidePopups;
 
 settingsPopupElement.onclick = (event) => {
     event.stopPropagation();
-}
+};
 
 highContrastModeElement.onchange = () => {
     document.body.className = highContrastModeElement.checked ? 'high-contrast' : '';
     setStorage('high-contrast', highContrastModeElement.checked);
-}
+};
 
-settingsDoneElement.onclick = () => {
-    settingsPopupElement.className = 'hidden popup';
+whyDidILosePopupElement.onclick = (event) => {
+    event.stopPropagation();
+};
+
+whyDidILosePopupButtonElement.onclick = (event) => {
+    whyDidILosePopupElement.className = (whyDidILosePopupElement.className.includes('shown') ? 'hidden' : 'shown') + ' popup';
+    event.stopPropagation();
+};
+
+whyDidILoseButtonElement.onclick = updateWhyDidILose;
+
+whyDidILoseInputElement.onkeydown = (event) => {
+    if(event.key === 'Enter') updateWhyDidILose();
 }
 
 if (getStorage('puzzleNumber') !== puzzleNumber.toString()) removeStorage('history');

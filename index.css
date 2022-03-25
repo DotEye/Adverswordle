@@ -41,13 +41,17 @@ main {
     padding: 10px;
 }
 
-button, select {
+button, select, input {
     background: none;
     color: white;
     border: 2px solid white;
     font-weight: bold;
     transition: 0.25s;
     padding: 10px;
+}
+
+input:focus {
+    outline: none;
 }
 
 option {
@@ -76,7 +80,6 @@ section {
 }
 
 footer {
-    margin-top: auto;
     text-align: left;
     margin: auto 0 15px 15px;
 }
@@ -186,6 +189,19 @@ footer {
 
 #message {
     font-size: medium;
+}
+
+#why-did-i-lose-popup-button {
+    margin-top: 15px;
+}
+
+#why-did-i-lose-input {
+    width: 50px;
+}
+
+#why-did-i-lose-output {
+    max-width: 250px;
+    font-weight: bold;
 }
 
 .thought-bubble-container {
