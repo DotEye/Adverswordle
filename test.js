@@ -96,3 +96,26 @@ history = [{word: 'SHOOT', score: ['green', 'green', 'green', '', 'green']}]; da
 assert(wordIsValid, true, 'SHORT', history, data.allowedLetters, data.requiredLetters);
 history = [{word: 'BCAAD', score: ['', '', 'green', 'yellow', '']}]; data = getAllowedAndRequiredLetters(history);
 assert(wordIsValid, false, 'WXAYZ', history, data.allowedLetters, data.requiredLetters);
+
+/*
+ * getReasonForLoss
+ */
+
+getEmoji = (color) => color === 'yellow' ? '🟨' : color === 'green' ? '🟩' : '⬛';
+makeReason = (thinkingOf, cardinality, letter, word, emoji) => `For "${thinkingOf}" to be a valid word, the ${cardinality}"${letter}" in "${word}" should have been ${emoji === '🟩' ? WHY_DID_I_LOSE_MESSAGES.green : emoji === '🟨' ? WHY_DID_I_LOSE_MESSAGES.yellow : WHY_DID_I_LOSE_MESSAGES['']} (${emoji}).`
+
+// Basic tests.
+history = [{word: 'ABCDE', score: ['green', 'green', 'green', 'green', 'green']}];
+assert(getReasonForLoss, makeReason('BCDEF', '', 'A', 'ABCDE', '⬛'), history, 'BCDEF');
+history = [{word: 'ABCDE', score: ['green', 'green', 'green', 'green', 'green']}];
+assert(getReasonForLoss, makeReason('BACDE', '', 'A', 'ABCDE', '🟨'), history, 'BACDE');
+history = [{word: 'ABCDE', score: ['', 'green', 'green', 'green', 'green']}];
+assert(getReasonForLoss, makeReason('ACDEF', '', 'A', 'ABCDE', '🟩'), history, 'ACDEF');
+
+// Duplicate letters.
+history = [{word: 'PLAZA', score: ['', '', 'yellow', '', '']}, {word: 'KABAR', score: ['', 'yellow', '', '', 'yellow']}];
+assert(getReasonForLoss, makeReason('MARCH', '1st ', 'A', 'KABAR', '🟩'), history, 'MARCH');
+history = [{word: 'PLAAA', score: ['', '', 'yellow', 'yellow', '']}, {word: 'AABZR', score: ['yellow', 'yellow', '', '', '']}];
+assert(getReasonForLoss, makeReason('MARCH', '2nd ', 'A', 'PLAAA', '⬛'), history, 'MARCH');
+history = [{word: 'PLAZA', score: ['', '', '', '', 'yellow']}];
+assert(getReasonForLoss, makeReason('AABCD', '1st ', 'A', 'PLAZA', '🟨'), history, 'AABCD');

@@ -24,7 +24,10 @@ const whyDidILoseOutputElement = document.getElementById('why-did-i-lose-output'
 
 const letterColors = ['', 'yellow', 'green'];
 const launchDate = new Date(2022, 2, 5, 0, 0, 0, 0);
-const puzzleNumber = Math.floor((new Date() - launchDate) / (24 * 60 * 60 * 1000));
+const now = new Date();
+const launchDateTimezoneOffset = launchDate.getTimezoneOffset();
+const nowTimezoneOffset = now.getTimezoneOffset();
+const puzzleNumber = Math.floor(((now - launchDate) + ((launchDateTimezoneOffset - nowTimezoneOffset) * 60000)) / (24 * 60 * 60 * 1000));
 
 const buttons = Array.from(document.getElementById('buttons').children);
 buttons.forEach(element => {

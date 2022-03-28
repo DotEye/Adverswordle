@@ -1,4 +1,10 @@
 const LETTERS = ['A',  'B',  'C',  'D',  'E',  'F',  'G',  'H',  'I',  'J',  'K',  'L',  'M',  'N',  'O',  'P',  'Q',  'R',  'S',  'T',  'U',  'V',  'W',  'X',  'Y',  'Z'];
+const WHY_DID_I_LOSE_MESSAGES = {
+    'green': 'scored as in the correct position',
+    'yellow': 'scored as in the word but not in the correct position',
+    '': 'left blank',
+};
+const ORDINALS = ['1st', '2nd', '3rd', '4th', '5th'];
 
 function wrapWithSpoilers(text, spoilerType) {
     switch (spoilerType) {
@@ -319,30 +325,39 @@ function chooseWordAndUpdateLettersLeft(history, first) {
     return word;
 }
 
+function getReasonForLossForWord(word, i, thinkingOf, score) {
+    if (word[i] === thinkingOf[i]) {
+        if (score[i] !== 'green') return 'green';
+    } else {
+        if (thinkingOf.includes(word[i]) && score[i] !== 'yellow') return 'yellow';
+        if (!thinkingOf.includes(word[i]) && score[i] !== '') return '';
+    }
+}
+
+function getLetterOrdinality(word, index) {
+    return word.split(word[index]).length > 2 ? `${ORDINALS[word.substring(0, index).split(word[index]).length - 1]} ` : '';
+}
+
+function getReasonForLoss(history, thinkingOf) {
+    for (const {word, score} of history) {
+        let tempThinkingOf = thinkingOf;
+        for (let i = 0; i < 5; ++i) {
+            const result = getReasonForLossForWord(word, i, tempThinkingOf, score);
+            if (score[i] !== '') {
+                const index = tempThinkingOf.indexOf(word[i]);
+                tempThinkingOf = tempThinkingOf.substring(0, index) + ' ' + tempThinkingOf.substring(index + 1);
+            }
+            if (result !== undefined) return `For "${thinkingOf}" to be a valid word, the ${getLetterOrdinality(word, i)}"${word[i]}" in "${word}" should have been ${WHY_DID_I_LOSE_MESSAGES[result]} (${getEmoji(result)}).`;
+        }
+    }
+}
+
 function updateWhyDidILose() {
     const thinkingOf = whyDidILoseInputElement.value.toUpperCase();
     if (thinkingOf.length !== 5) return whyDidILoseOutputElement.innerText = `"${thinkingOf}" is not 5 characters long.`;
     if (!allWords.includes(thinkingOf)) return whyDidILoseOutputElement.innerText = `"${thinkingOf}" is not in the dictionary.`;
 
-    const history = getHistory();
-    for (const {word, score} of history) {
-        for (let i = 0; i < 5; ++i) {
-            let result;
-
-            if (word[i] === thinkingOf[i]) {
-                if (score[i] !== 'green') result = `scored as in the correct position (${getEmoji('green')})`;
-            }
-            else {
-                if (thinkingOf.includes(word[i]) && score[i] !== 'yellow') result = `scored as in the word but not in the correct position (${getEmoji('yellow')})`;
-                else if (!thinkingOf.includes(word[i]) && score[i] !== '') result = `left blank (${getEmoji('')})`;
-            }
-
-            if (result !== undefined) {
-                whyDidILoseOutputElement.innerText = `For "${thinkingOf}" to be a valid word, the "${word[i]}" in ${word} should have been ${result}.`;
-                return;
-            }
-        }
-    }
+    whyDidILoseOutputElement.innerText = getReasonForLoss(getHistory(), thinkingOf);
 }
 
 
