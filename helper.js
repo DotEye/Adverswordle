@@ -338,15 +338,23 @@ function getLetterOrdinality(word, index) {
     return word.split(word[index]).length > 2 ? `${ORDINALS[word.substring(0, index).split(word[index]).length - 1]} ` : '';
 }
 
+function removeCharacter(thinkingOf, character) {
+    const index = thinkingOf.indexOf(character);
+    return thinkingOf.substring(0, index) + ' ' + thinkingOf.substring(index + 1);
+}
+
 function getReasonForLoss(history, thinkingOf) {
     for (const {word, score} of history) {
         let tempThinkingOf = thinkingOf;
         for (let i = 0; i < 5; ++i) {
-            const result = getReasonForLossForWord(word, i, tempThinkingOf, score);
-            if (score[i] !== '') {
-                const index = tempThinkingOf.indexOf(word[i]);
-                tempThinkingOf = tempThinkingOf.substring(0, index) + ' ' + tempThinkingOf.substring(index + 1);
+            if (word[i] === thinkingOf[i] && score[i] !== 'green') {
+                tempThinkingOf = removeCharacter(tempThinkingOf, word[i]);
+                return `For "${thinkingOf}" to be a valid word, the ${getLetterOrdinality(word, i)}"${word[i]}" in "${word}" should have been ${WHY_DID_I_LOSE_MESSAGES.green} (${getEmoji('green')}).`;
             }
+        }
+        for (let i = 0; i < 5; ++i) {
+            const result = getReasonForLossForWord(word, i, tempThinkingOf, score);
+            if (score[i] !== '') tempThinkingOf = removeCharacter(tempThinkingOf, word[i]);
             if (result !== undefined) return `For "${thinkingOf}" to be a valid word, the ${getLetterOrdinality(word, i)}"${word[i]}" in "${word}" should have been ${WHY_DID_I_LOSE_MESSAGES[result]} (${getEmoji(result)}).`;
         }
     }

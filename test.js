@@ -119,3 +119,9 @@ history = [{word: 'PLAAA', score: ['', '', 'yellow', 'yellow', '']}, {word: 'AAB
 assert(getReasonForLoss, makeReason('MARCH', '2nd ', 'A', 'PLAAA', '⬛'), history, 'MARCH');
 history = [{word: 'PLAZA', score: ['', '', '', '', 'yellow']}];
 assert(getReasonForLoss, makeReason('AABCD', '1st ', 'A', 'PLAZA', '🟨'), history, 'AABCD');
+history = [{word: 'BANAL', score: ['green', 'yellow', '', '', 'yellow']}];
+assert(getReasonForLoss, makeReason('BYLAW', '2nd ', 'A', 'BANAL', '🟩'), history, 'BYLAW');
+history = [{word: 'AANAA', score: ['yellow', 'yellow', '', '', '']}];
+assert(getReasonForLoss, makeReason('BBBAA', '3rd ', 'A', 'AANAA', '🟩'), history, 'BBBAA');
+history = [{word: 'AANAA', score: ['', '', '', 'yellow', 'yellow']}];
+assert(getReasonForLoss, makeReason('AABBB', '1st ', 'A', 'AANAA', '🟩'), history, 'AABBB');
