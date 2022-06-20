@@ -338,9 +338,9 @@ function getLetterOrdinality(word, index) {
     return word.split(word[index]).length > 2 ? `${ORDINALS[word.substring(0, index).split(word[index]).length - 1]} ` : '';
 }
 
-function removeCharacter(thinkingOf, character) {
-    const index = thinkingOf.indexOf(character);
-    return thinkingOf.substring(0, index) + ' ' + thinkingOf.substring(index + 1);
+function removeCharacter(word, character) {
+    const index = word.indexOf(character);
+    return word.substring(0, index) + ' ' + word.substring(index + 1);
 }
 
 function getReasonForLoss(history, thinkingOf) {
@@ -348,14 +348,23 @@ function getReasonForLoss(history, thinkingOf) {
         let tempThinkingOf = thinkingOf;
         for (let i = 0; i < 5; ++i) {
             if (word[i] === thinkingOf[i] && score[i] !== 'green') {
-                tempThinkingOf = removeCharacter(tempThinkingOf, word[i]);
                 return `For "${thinkingOf}" to be a valid word, the ${getLetterOrdinality(word, i)}"${word[i]}" in "${word}" should have been ${WHY_DID_I_LOSE_MESSAGES.green} (${getEmoji('green')}).`;
             }
         }
+        const results = [];
         for (let i = 0; i < 5; ++i) {
             const result = getReasonForLossForWord(word, i, tempThinkingOf, score);
+            if (result !== undefined) results.push({i, result});
             if (score[i] !== '') tempThinkingOf = removeCharacter(tempThinkingOf, word[i]);
-            if (result !== undefined) return `For "${thinkingOf}" to be a valid word, the ${getLetterOrdinality(word, i)}"${word[i]}" in "${word}" should have been ${WHY_DID_I_LOSE_MESSAGES[result]} (${getEmoji(result)}).`;
+        }
+        let tempWord = word;
+        for (const {i, result} of results) {
+            const next = tempWord.indexOf(word[i], i + 1);
+            if (next !== -1 && score[next] === 'green' && result === 'yellow') {
+                tempWord = removeCharacter(tempWord, word[i]);
+                continue;
+            }
+            return `For "${thinkingOf}" to be a valid word, the ${getLetterOrdinality(word, i)}"${word[i]}" in "${word}" should have been ${WHY_DID_I_LOSE_MESSAGES[result]} (${getEmoji(result)}).`;
         }
     }
 }
