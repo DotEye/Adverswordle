@@ -1,12 +1,38 @@
-const LETTERS = ['A',  'B',  'C',  'D',  'E',  'F',  'G',  'H',  'I',  'J',  'K',  'L',  'M',  'N',  'O',  'P',  'Q',  'R',  'S',  'T',  'U',  'V',  'W',  'X',  'Y',  'Z'];
-const WHY_DID_I_LOSE_MESSAGES = {
-    'green': 'scored as in the correct position',
-    'yellow': 'scored as in the word but not in the correct position',
-    '': 'left blank',
-};
-const ORDINALS = ['1st', '2nd', '3rd', '4th', '5th'];
+import {
+    aiThoughtsElement,
+    boardElement,
+    buttons,
+    controlsElement,
+    gameOverElement,
+    gameOverReasonElement,
+    highContrastModeElement,
+    highScoreElement,
+    keyboardElement,
+    messageElement,
+    scoreElement,
+    settingsPopupElement,
+    shareButtonElement,
+    submitButtonElement,
+    timeLeftElement,
+    tooltipPopupElement,
+    tutorialElement,
+    whyDidILoseInputElement,
+    whyDidILoseOutputElement,
+    whyDidILosePopupButtonElement,
+    whyDidILosePopupElement,
+} from './dom.js';
+import {allWords, firstWords} from './words.js';
+import {isMobileOrTablet} from './isMobileOrTablet.js';
+import {puzzleNumber} from './constants.js';
+import * as Random from 'random-seed';
+import {
+    getAllowedAndRequiredLetters,
+    getReasonForLoss,
+    validSubmission,
+    wordIsValid,
+} from './exposedForTesting.js';
 
-function wrapWithSpoilers(text, spoilerType) {
+export function wrapWithSpoilers(text, spoilerType) {
     switch (spoilerType) {
         case 'Discord Spoilers':
             return `||${text}||`;
@@ -17,7 +43,7 @@ function wrapWithSpoilers(text, spoilerType) {
     }
 }
 
-function wrapWithBold(text, spoilerType) {
+export function wrapWithBold(text, spoilerType) {
     switch (spoilerType) {
         case 'Discord Spoilers':
         case 'Reddit Spoilers':
@@ -27,7 +53,7 @@ function wrapWithBold(text, spoilerType) {
     }
 }
 
-function wrapWithHeader(text, spoilerType) {
+export function wrapWithHeader(text, spoilerType) {
     switch (spoilerType) {
         case 'Discord Spoilers':
             return `**${text}**`;
@@ -38,7 +64,7 @@ function wrapWithHeader(text, spoilerType) {
     }
 }
 
-function shareText(text, spoilerType) {
+export function shareText(text, spoilerType) {
     if (isMobileOrTablet() && navigator.share) {
         navigator.share({
             title: 'Adverswordle',
@@ -59,17 +85,17 @@ function copyToClipboard(text, spoilerType) {
     }).catch(() => alert('Sharing failed or was cancelled.'));
 }
 
-function hideTutorial() {
+export function hideTutorial() {
     tutorialElement.style.opacity = '0';
 }
 
-function finishWordUpdate(history) {
+export function finishWordUpdate(generator, history) {
     if (history.some(({score}) => score.every(letter => letter === 'green'))) {
         gameOver(true);
         return;
     }
 
-    const word = chooseWordAndUpdateLettersLeft(history);
+    const word = chooseWordAndUpdateLettersLeft(generator, history);
     if (word) {
         putWordOnButtons(word, history);
         submitButtonElement.disabled = !validSubmission(word, getScoreFromButtons(), history);
@@ -77,18 +103,10 @@ function finishWordUpdate(history) {
     }
 }
 
-function getEmoji(color) {
-    return color === 'yellow'
-        ? (highContrastModeElement.checked ? '🟦' : '🟨')
-        : color === 'green'
-            ? (highContrastModeElement.checked ? '🟧' : '🟩')
-            : '⬛';
-}
-
-function updateAIThoughts() {
+export function updateAIThoughts() {
     if (gameOverElement.className === 'shown') {
-        Math.seedrandom((puzzleNumber * 100) + getHistory().length);
-        aiThoughtsElement.innerText = randomChoice([
+        const generator = new Random((puzzleNumber * 100) + getHistory().length);
+        aiThoughtsElement.innerText = randomChoice(generator, [
             "Beep boop.",
             "Good game!",
             "GG!",
@@ -132,21 +150,7 @@ function updateAIThoughts() {
     }
 }
 
-function validSubmission(word, score, history) {
-    if (history.length === 0) return true;
-    const {word: historyWord, score: historyScore} = history[history.length - 1];
-
-    const yellows = Object.fromEntries(Array.from(word + historyWord).map(letter => [letter, 0]));
-    for (let i = 0; i < 5; ++i) {
-        if (historyScore[i] === 'green' && score[i] !== 'green') return false;
-        if (historyScore[i] === 'yellow') yellows[historyWord[i]]++;
-        if (score[i] !== '') yellows[word[i]]--;
-    }
-
-    return !Object.values(yellows).some(value => value > 0);
-}
-
-function displayWord(word) {
+export function displayWord(word) {
     const row = document.createElement('div');
     for (let i = 0; i < 5; ++i) {
         const span = document.createElement('span');
@@ -157,7 +161,7 @@ function displayWord(word) {
     boardElement.appendChild(row);
 }
 
-function putWordOnButtons(word, history) {
+export function putWordOnButtons(word, history) {
     for (let i = 0; i < 5; ++i) {
         buttons[i].innerText = word[i];
         buttons[i].className = '';
@@ -174,15 +178,15 @@ function putWordOnButtons(word, history) {
     }
 }
 
-function getWordFromButtons() {
+export function getWordFromButtons() {
     return buttons.map(button => button.innerText).join('');
 }
 
-function getScoreFromButtons() {
+export function getScoreFromButtons() {
     return buttons.map(button => button.className);
 }
 
-function getHistory() {
+export function getHistory() {
     const result = [];
     for (const element of boardElement.childNodes) {
         result.push({
@@ -243,48 +247,6 @@ function gameOver(win) {
     }, 1000);
 }
 
-function removeIfExists(array, element) {
-    const index = array.indexOf(element);
-    if (index !== -1) array.splice(index, 1);
-}
-
-function getAllowedAndRequiredLetters(history) {
-    const allowedLetters = [[...LETTERS], [...LETTERS], [...LETTERS], [...LETTERS], [...LETTERS]];
-    const requiredLetters = [];
-    for (const [index, {word: historyWord, score}] of Object.entries(history)) {
-        for (let i = 0; i < 5; ++i) {
-            if (score[i] === 'green') {
-                allowedLetters[i] = [historyWord[i]];
-                if (Number(index) === history.length - 1) requiredLetters.push(historyWord[i]);
-            } else if (score[i] === 'yellow') {
-                removeIfExists(allowedLetters[i], historyWord[i]);
-                if (Number(index) === history.length - 1) requiredLetters.push(historyWord[i]);
-            } else {
-                if (Array.from(historyWord).some((letter, index) => score[index] === 'yellow' && letter === historyWord[i])) {
-                    removeIfExists(allowedLetters[i], historyWord[i]);
-                } else {
-                    allowedLetters.forEach((array, index) => {
-                        if (score[index] !== 'green') removeIfExists(array, historyWord[i]);
-                    });
-                }
-            }
-        }
-    }
-
-    return {allowedLetters, requiredLetters};
-}
-
-function wordIsValid(word, history, allowedLetters, requiredLetters) {
-    requiredLetters = [...requiredLetters];
-    if (history.length === 0) return true;
-
-    for (let i = 0; i < 5; ++i) {
-        if (!allowedLetters[i].includes(word[i])) return false;
-        if (requiredLetters.includes(word[i])) removeIfExists(requiredLetters, word[i]);
-    }
-
-    return requiredLetters.length === 0;
-}
 
 function getWordList(history) {
     const {allowedLetters, requiredLetters} = getAllowedAndRequiredLetters(history);
@@ -293,13 +255,13 @@ function getWordList(history) {
 
 function chooseWord(history) {
     const wordList = getWordList(history);
-    Math.seedrandom((puzzleNumber * 100) + history.length);
-    for (const word of wordList) if (Math.random() < Math.max(3 / wordList.length, 0.1)) return word;
-    return randomChoice(wordList);
+    const generator = new Random((puzzleNumber * 100) + history.length);
+    for (const word of wordList) if (generator.random() < Math.max(3 / wordList.length, 0.1)) return word;
+    return randomChoice(generator, wordList);
 }
 
-function chooseWordAndUpdateLettersLeft(history, first) {
-    const word = first ? randomChoice(firstWords) : chooseWord(history);
+export function chooseWordAndUpdateLettersLeft(generator, history, first) {
+    const word = first ? randomChoice(generator, firstWords) : chooseWord(history);
 
     if (!word) gameOver(false);
 
@@ -325,77 +287,32 @@ function chooseWordAndUpdateLettersLeft(history, first) {
     return word;
 }
 
-function getReasonForLossForWord(word, i, thinkingOf, score) {
-    if (word[i] === thinkingOf[i]) {
-        if (score[i] !== 'green') return 'green';
-    } else {
-        if (thinkingOf.includes(word[i]) && score[i] !== 'yellow') return 'yellow';
-        if (!thinkingOf.includes(word[i]) && score[i] !== '') return '';
-    }
-}
-
-function getLetterOrdinality(word, index) {
-    return word.split(word[index]).length > 2 ? `${ORDINALS[word.substring(0, index).split(word[index]).length - 1]} ` : '';
-}
-
-function removeCharacter(word, character) {
-    const index = word.indexOf(character);
-    return word.substring(0, index) + ' ' + word.substring(index + 1);
-}
-
-function getReasonForLoss(history, thinkingOf) {
-    for (const {word, score} of history) {
-        let tempThinkingOf = thinkingOf;
-        for (let i = 0; i < 5; ++i) {
-            if (word[i] === thinkingOf[i] && score[i] !== 'green') {
-                return `For "${thinkingOf}" to be a valid word, the ${getLetterOrdinality(word, i)}"${word[i]}" in "${word}" should have been ${WHY_DID_I_LOSE_MESSAGES.green} (${getEmoji('green')}).`;
-            }
-        }
-        const results = [];
-        for (let i = 0; i < 5; ++i) {
-            const result = getReasonForLossForWord(word, i, tempThinkingOf, score);
-            if (result !== undefined) results.push({i, result});
-            if (score[i] !== '') tempThinkingOf = removeCharacter(tempThinkingOf, word[i]);
-        }
-        let tempWord = word;
-        for (const {i, result} of results) {
-            const next = tempWord.indexOf(word[i], i + 1);
-            if (next !== -1 && score[next] === 'green' && result === 'yellow') {
-                tempWord = removeCharacter(tempWord, word[i]);
-                continue;
-            }
-            return `For "${thinkingOf}" to be a valid word, the ${getLetterOrdinality(word, i)}"${word[i]}" in "${word}" should have been ${WHY_DID_I_LOSE_MESSAGES[result]} (${getEmoji(result)}).`;
-        }
-    }
-}
-
-function updateWhyDidILose() {
+export function updateWhyDidILose() {
     const thinkingOf = whyDidILoseInputElement.value.toUpperCase();
     if (thinkingOf.length !== 5) return whyDidILoseOutputElement.innerText = `"${thinkingOf}" is not 5 characters long.`;
     if (!allWords.includes(thinkingOf)) return whyDidILoseOutputElement.innerText = `"${thinkingOf}" is not in the dictionary.`;
 
-    whyDidILoseOutputElement.innerText = getReasonForLoss(getHistory(), thinkingOf);
+    whyDidILoseOutputElement.innerText = getReasonForLoss(getHistory(), thinkingOf, highContrastModeElement.checked);
 }
 
-
-function hidePopups() {
+export function hidePopups() {
     tooltipPopupElement.className = 'hidden popup';
     settingsPopupElement.className = 'hidden popup';
     whyDidILosePopupElement.className = 'hidden popup';
 }
 
-function randomChoice(array) {
-    return array[Math.floor(Math.random() * array.length)];
+function randomChoice(generator, array) {
+    return array[Math.floor(generator.random() * array.length)];
 }
 
-function loadFromHistory(history) {
+export function loadFromHistory(history) {
     for (const {word, score} of history) {
         buttons.forEach((button, index) => button.className = score[index]);
         displayWord(word);
     }
 }
 
-function setStorage(key, value) {
+export function setStorage(key, value) {
     try {
         localStorage.setItem(key, value);
     } catch {
@@ -403,7 +320,7 @@ function setStorage(key, value) {
     }
 }
 
-function getStorage(key) {
+export function getStorage(key) {
     try {
         return localStorage.getItem(key)
     } catch {
@@ -411,7 +328,7 @@ function getStorage(key) {
     }
 }
 
-function removeStorage(key) {
+export function removeStorage(key) {
     try {
         localStorage.removeItem(key);
     } catch {

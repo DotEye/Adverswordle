@@ -1,0 +1,24 @@
+{
+    "name": "adverswordle",
+    "version": "1.0.0",
+    "description": "Adverswordle is Wordle but backwards. A free online word game where an AI guesses the word you are thinking of.",
+    "repository": "https://github.com/DotEye/Adverswordle",
+    "author": "DotEye <github@doteye.online>",
+    "license": "GNU GPLv3",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "jasmine": "^4.4.0",
+        "parcel": "^2.7.0",
+        "random-seed": "^0.3.0"
+    },
+    "scripts": {
+        "start": "parcel index.html",
+        "build": "parcel build index.html",
+        "test": "jasmine tests.js"
+    },
+    "devDependencies": {
+        "@parcel/packager-raw-url": "2.7.0",
+        "@parcel/transformer-webmanifest": "2.7.0"
+    }
+}

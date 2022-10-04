@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Adverswordle is Wordle but backwards. A free online word game.">
+    <meta name="description" content="Adverswordle is Wordle but backwards. A free online word game where an AI guesses the word you are thinking of.">
     <meta name="keywords" content="Wordle, backwards Wordle, word game">
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://adverswordle.doteye.online">
     <meta property="og:title" content="Adverswordle">
-    <meta property="og:description" content="Adverswordle is Wordle but backwards. A free online word game.">
-    <meta property="og:image" content="ogImage.png" />
+    <meta property="og:description" content="Adverswordle is Wordle but backwards. A free online word game where an AI guesses the word you are thinking of.">
+    <meta property="og:image" content="assets/ogImage.png" />
     <link rel="manifest" href="manifest.json" />
-    <link rel="icon" href="favicon.png" />
+    <link rel="icon" href="assets/favicon.png" />
     <link rel="stylesheet" href="index.css" />
-    <title>Adverswordle</title>
+    <title>Adverswordle | Official Game</title>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-JLPWE53TQY"></script>
     <script>
@@ -49,7 +49,7 @@
         <div id="game-over" class="hidden">
             <h3>Game Over!</h3>
             <p id="game-over-reason"></p>
-            <p id="score-wrapper">Your score: <strong id="score"></strong><br><span id="message"></span> <span id="tooltip">?</span></p>
+            <p id="score-wrapper">Your score: <strong id="score">0</strong><br><span id="message"></span> <span id="tooltip">?</span></p>
             <select id="share">
                 <option disabled selected value="Share">Share</option>
                 <option value="Normal">Normal</option>
@@ -115,10 +115,6 @@
         <a href="https://discord.gg/tykwEuuYCt" target="_blank">Discord Server</a>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
-    <script src="words.js"></script>
-    <script src="isMobileOrTablet.js"></script>
-    <script src="helper.js"></script>
-    <script src="index.js"></script>
+    <script src="src/index.js" type="module"></script>
 </body>
 </html>

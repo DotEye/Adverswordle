@@ -1,35 +1,48 @@
-const boardElement = document.getElementById('board');
-const submitButtonElement = document.getElementById('submit');
-const shareButtonElement = document.getElementById('share');
-const gameOverElement = document.getElementById('game-over');
-const gameOverReasonElement = document.getElementById('game-over-reason');
-const scoreElement = document.getElementById('score');
-const messageElement = document.getElementById('message');
-const keyboardElement = document.getElementById('keyboard');
-const aiThoughtsElement = document.getElementById('ai-thoughts');
-const tutorialElement = document.getElementById('tutorial');
-const tooltipElement = document.getElementById('tooltip');
-const tooltipPopupElement = document.getElementById('tooltip-popup');
-const settingsButtonElement = document.getElementById('settings-button');
-const settingsPopupElement = document.getElementById('settings-popup');
-const highContrastModeElement = document.getElementById('high-contrast-mode');
-const controlsElement = document.getElementById('controls');
-const timeLeftElement = document.getElementById('time-left');
-const highScoreElement = document.getElementById('high-score');
-const whyDidILosePopupButtonElement = document.getElementById('why-did-i-lose-popup-button');
-const whyDidILosePopupElement = document.getElementById('why-did-i-lose-popup');
-const whyDidILoseInputElement = document.getElementById('why-did-i-lose-input');
-const whyDidILoseButtonElement = document.getElementById('why-did-i-lose-button');
-const whyDidILoseOutputElement = document.getElementById('why-did-i-lose-output');
+import {
+    chooseWordAndUpdateLettersLeft,
+    displayWord,
+    finishWordUpdate,
+    getHistory,
+    getScoreFromButtons,
+    getStorage,
+    getWordFromButtons,
+    hidePopups,
+    hideTutorial,
+    loadFromHistory,
+    putWordOnButtons,
+    removeStorage,
+    setStorage,
+    shareText,
+    updateAIThoughts,
+    updateWhyDidILose,
+    wrapWithBold,
+    wrapWithHeader,
+    wrapWithSpoilers,
+} from './helper.js';
+import {
+    boardElement,
+    buttons,
+    highContrastModeElement,
+    scoreElement,
+    settingsButtonElement,
+    settingsPopupElement,
+    shareButtonElement,
+    submitButtonElement,
+    tooltipElement,
+    tooltipPopupElement,
+    tutorialElement,
+    whyDidILoseButtonElement,
+    whyDidILoseInputElement,
+    whyDidILosePopupButtonElement,
+    whyDidILosePopupElement,
+} from './dom.js';
+import {isMobileOrTablet} from './isMobileOrTablet.js';
+import {puzzleNumber, letterColors} from './constants.js';
+import * as Random from 'random-seed';
+import {getEmoji, validSubmission} from './exposedForTesting.js';
 
-const letterColors = ['', 'yellow', 'green'];
-const launchDate = new Date(2022, 2, 5, 0, 0, 0, 0);
-const now = new Date();
-const launchDateTimezoneOffset = launchDate.getTimezoneOffset();
-const nowTimezoneOffset = now.getTimezoneOffset();
-const puzzleNumber = Math.floor(((now - launchDate) + ((launchDateTimezoneOffset - nowTimezoneOffset) * 60000)) / (24 * 60 * 60 * 1000));
+const generator = new Random(puzzleNumber);
 
-const buttons = Array.from(document.getElementById('buttons').children);
 buttons.forEach(element => {
     element.onclick = () => {
         const history = getHistory();
@@ -49,7 +62,7 @@ submitButtonElement.onclick = () => {
     const history = getHistory();
     setStorage('history', JSON.stringify(history));
 
-    finishWordUpdate(history);
+    finishWordUpdate(generator, history);
 };
 
 shareButtonElement.onchange = (event) => {
@@ -57,7 +70,7 @@ shareButtonElement.onchange = (event) => {
 
     let text = `${wrapWithHeader(`Adverswordle #${puzzleNumber}`, spoilerType)}\n\n`;
     for (const [index, element] of Object.entries(boardElement.childNodes)) {
-        const score = Array.from(element.childNodes).map(el => getEmoji(el.className)).join('');
+        const score = Array.from(element.childNodes).map(el => getEmoji(highContrastModeElement.checked, el.className)).join('');
         text += `${wrapWithSpoilers(score, spoilerType)} ${index === '0' ? element.innerText : wrapWithSpoilers(element.innerText, spoilerType)}\n`;
         if (spoilerType === 'Reddit Spoilers') text += '\n';
     }
@@ -104,16 +117,15 @@ whyDidILoseInputElement.onkeydown = (event) => {
 }
 
 if (getStorage('puzzleNumber') !== puzzleNumber.toString()) removeStorage('history');
-Math.seedrandom(puzzleNumber);
 const rawHistory = getStorage('history');
 const history = rawHistory ? JSON.parse(rawHistory) : undefined;
 if (history) {
     loadFromHistory(history);
     hideTutorial();
 }
-const word = chooseWordAndUpdateLettersLeft(getHistory(), !history);
+const word = chooseWordAndUpdateLettersLeft(generator, getHistory(), !history);
 if (word) putWordOnButtons(word);
-if (history) finishWordUpdate(history);
+if (history) finishWordUpdate(generator, history);
 updateAIThoughts();
 if (getStorage('high-contrast') === 'true') {
     document.body.className = 'high-contrast';

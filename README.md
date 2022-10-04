@@ -1,6 +1,6 @@
 # Adverswordle
 
-Adverswordle is Wordle but backwards. A free online word game.
+Adverswordle is Wordle but backwards. A free online word game where an AI guesses the word you are thinking of.
 
 - 📰 Featured in *GameRant*! [Read Here](https://gamerant.com/adverswordle-wordle-backwards)
 - 📰 Featured in *Tom's Guide*! [Read Here](https://www.tomsguide.com/news/the-hottest-new-wordle-alternative-flips-the-game-on-its-head)

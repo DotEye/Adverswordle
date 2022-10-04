@@ -81,7 +81,8 @@ section {
 
 footer {
     text-align: left;
-    margin: auto 0 15px 15px;
+    margin-left: 15px;
+    padding-bottom: 15px;
 }
 
 #board span {
