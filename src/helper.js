@@ -64,17 +64,24 @@ export function wrapWithHeader(text, spoilerType) {
     }
 }
 
+function navigatorShare(text, spoilerType) {
+    navigator.share({
+        title: 'Adverswordle',
+        text,
+    }).then(
+        () => gtag('event', 'share', {method: 'Browser', content_type: spoilerType}),
+    ).catch(() => copyToClipboard(text, spoilerType));
+}
+
 export function shareText(text, spoilerType) {
-    if (isMobileOrTablet() && navigator.share) {
-        navigator.share({
-            title: 'Adverswordle',
-            text,
-        }).then(
-            () => gtag('event', 'share', {method: 'Browser', content_type: spoilerType})
-        ).catch(() => copyToClipboard(text, spoilerType));
-    } else {
-        copyToClipboard(text, spoilerType);
-    }
+    // If on mobile, try share first and fall back to copy.
+    // If not on mobile, try copy first and fall back to share.
+    if (isMobileOrTablet())
+        try { navigatorShare(text, spoilerType); }
+        catch { copyToClipboard(text, spoilerType); }
+    else
+        try { copyToClipboard(text, spoilerType); }
+        catch { navigatorShare(text, spoilerType); }
 }
 
 function copyToClipboard(text, spoilerType) {
