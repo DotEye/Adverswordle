@@ -50,7 +50,12 @@ button, select, input {
     padding: 10px;
 }
 
-input:focus {
+button:focus-visible, select:focus-visible, input:focus-visible {
+    border-style: dashed;
+    outline: none;
+}
+
+input:focus-visible {
     outline: none;
 }
 
@@ -149,6 +154,19 @@ footer {
     font-size: 12px;
     top: -3px;
     cursor: pointer;
+}
+
+#tooltip:focus-visible {
+    border-style: dashed;
+    outline: none;
+}
+
+#high-contrast-mode {
+    transition: none;
+}
+
+#high-contrast-mode:focus-visible {
+    outline: 1px dashed white !important;
 }
 
 .popup {

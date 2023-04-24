@@ -26,10 +26,10 @@
 </head>
 <body>
     <main>
-        <h1>Adverswordle <span id="settings-button">⚙️</span></h1>
+        <h1>Adverswordle <span id="settings-button" tabindex="0">⚙️</span></h1>
         <section>
             <strong>How to play</strong>:
-            This is <a href="https://en.wikipedia.org/wiki/Wordle" target="_blank">Wordle</a> but backwards.
+            This is <a href="https://en.wikipedia.org/wiki/Wordle" target="_blank" tabindex="0">Wordle</a> but backwards.
             An AI guesses the word and you score it.
             Your score is how many guesses it took the AI.
             Be careful not to make the game impossible or else you lose.
@@ -41,16 +41,16 @@
                 <span id="tutorial">Click &#8594;</span>
             </div>
             <div id="buttons">
-                <button></button> <button></button> <button></button> <button></button> <button></button>
+                <button tabindex="0"></button> <button tabindex="0"></button> <button tabindex="0"></button> <button tabindex="0"></button> <button tabindex="0"></button>
             </div>
-            <button id="submit">Submit</button>
+            <button id="submit" tabindex="0">Submit</button>
         </section>
 
         <div id="game-over" class="hidden">
             <h3>Game Over!</h3>
             <p id="game-over-reason"></p>
             <p id="score-wrapper">Your score: <strong id="score">0</strong><br><span id="message"></span> <span id="tooltip">?</span></p>
-            <select id="share">
+            <select id="share" tabindex="-1">
                 <option disabled selected value="Share">Share</option>
                 <option value="Normal">Normal</option>
                 <option value="Discord Spoilers">Discord Spoilers</option>
@@ -58,16 +58,16 @@
             </select>
             <div>High Score: <strong id="high-score">0</strong></div>
             <div id="time-left"></div>
-            <button id="why-did-i-lose-popup-button"> Why did I lose?</button>
+            <button id="why-did-i-lose-popup-button" tabindex="-1"> Why did I lose?</button>
         </div>
 
         <div id="why-did-i-lose-popup" class="hidden popup">
             <h2>Why did I lose?</h2>
             <p>Enter the word you thought was valid.</p>
-            <input id="why-did-i-lose-input" maxlength="5" />
-            <button id="why-did-i-lose-button">Tell me why I lost</button>
+            <input id="why-did-i-lose-input" maxlength="5" tabindex="-1" />
+            <button id="why-did-i-lose-button" tabindex="-1">Tell me why I lost</button>
             <p id="why-did-i-lose-output">You lost because...</p>
-            <button class="done-button">Done</button>
+            <button class="done-button" tabindex="-1">Done</button>
         </div>
 
         <div id="tooltip-popup" class="hidden popup">
@@ -80,7 +80,7 @@
             <p>12-13 = Incredible!!</p>
             <p>>13 = Genius!!!</p>
             <br>
-            <button class="done-button">Done</button>
+            <button class="done-button" tabindex="-1">Done</button>
         </div>
 
         <div id="settings-popup" class="hidden popup">
@@ -88,10 +88,10 @@
             <p>
                 <label>
                     High Contrast Mode
-                    <input type="checkbox" id="high-contrast-mode" />
+                    <input type="checkbox" id="high-contrast-mode" tabindex="-1" />
                 </label>
             </p>
-            <button class="done-button">Done</button>
+            <button class="done-button" tabindex="-1">Done</button>
         </div>
 
         <section>
@@ -112,7 +112,8 @@
     </main>
     <footer>
         <a href="https://doteye.online" target="_blank">More Stuff Here</a> |
-        <a href="https://discord.gg/tykwEuuYCt" target="_blank">Discord Server</a>
+        <a href="https://discord.gg/tykwEuuYCt" target="_blank">Discord Server</a> |
+        <a href="https://doteye.online/privacy" target="_blank">Privacy Policy</a>
     </footer>
 
     <script src="src/index.js" type="module"></script>

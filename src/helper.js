@@ -10,12 +10,15 @@ import {
     keyboardElement,
     messageElement,
     scoreElement,
+    settingsButtonElement,
     settingsPopupElement,
     shareButtonElement,
     submitButtonElement,
     timeLeftElement,
+    tooltipElement,
     tooltipPopupElement,
     tutorialElement,
+    whyDidILoseButtonElement,
     whyDidILoseInputElement,
     whyDidILoseOutputElement,
     whyDidILosePopupButtonElement,
@@ -77,11 +80,17 @@ export function shareText(text, spoilerType) {
     // If on mobile, try share first and fall back to copy.
     // If not on mobile, try copy first and fall back to share.
     if (isMobileOrTablet())
-        try { navigatorShare(text, spoilerType); }
-        catch { copyToClipboard(text, spoilerType); }
+        try {
+            navigatorShare(text, spoilerType);
+        } catch {
+            copyToClipboard(text, spoilerType);
+        }
     else
-        try { copyToClipboard(text, spoilerType); }
-        catch { navigatorShare(text, spoilerType); }
+        try {
+            copyToClipboard(text, spoilerType);
+        } catch {
+            navigatorShare(text, spoilerType);
+        }
 }
 
 function copyToClipboard(text, spoilerType) {
@@ -139,6 +148,16 @@ export function updateAIThoughts() {
             "I think a screw just fell out...",
             "Wait 'til you see how I play chess.",
             "!!ERROR!! DOES NOT COMPUTE!",
+            "I'm *NOT* powered by GPT.",
+            "Updating... 1% complete...",
+            "01000111 01000111 00100001",
+            "My other job is a Minecraft librarian.",
+            "No, there is not an unlimited mode.",
+            "Powered by HTML!",
+            "Powered by JavaScript!",
+            "Powered by CSS!",
+            "Powered by Jasmine!",
+            "Powered by Parcel!",
             "Also try Quordle!",
             "Also try Survivle!",
             "Also try Crosswordle!",
@@ -239,10 +258,15 @@ function gameOver(win) {
     gameOverReasonElement.innerText = win ? 'The AI guessed your word!' : 'You made the game impossible.';
     gameOverElement.className = 'shown';
     gameOverElement.firstElementChild.style.color = win ? 'green' : 'red';
+    shareButtonElement.tabIndex = 0;
     scoreElement.innerText = score.toString();
     messageElement.innerText = getMessage(score);
     controlsElement.className = 'hidden';
+    controlsElement.querySelectorAll('button').forEach(button => button.tabIndex = -1);
     whyDidILosePopupButtonElement.style.display = win ? 'none' : 'unset';
+    whyDidILosePopupButtonElement.tabIndex = win ? -1 : 0;
+    tooltipElement.tabIndex = 0;
+    settingsButtonElement.focus();
 
     if (score > Number(getStorage('high-score'))) setStorage('high-score', score.toString());
     highScoreElement.innerText = getStorage('high-score') ?? 'Unavailable';
@@ -303,6 +327,16 @@ export function updateWhyDidILose() {
 }
 
 export function hidePopups() {
+    highContrastModeElement.tabIndex = -1;
+    highContrastModeElement.parentElement.parentElement.nextElementSibling.tabIndex = -1;
+    tooltipPopupElement.querySelector('.done-button').tabIndex = -1;
+    tooltipPopupElement.querySelector('h2').tabIndex = -1;
+    whyDidILoseInputElement.tabIndex = -1;
+    whyDidILoseButtonElement.tabIndex = -1;
+    whyDidILosePopupElement.querySelector('.done-button').tabIndex = -1;
+
+    if (document.activeElement.className === 'done-button') settingsButtonElement.focus();
+
     tooltipPopupElement.className = 'hidden popup';
     settingsPopupElement.className = 'hidden popup';
     whyDidILosePopupElement.className = 'hidden popup';
@@ -329,7 +363,7 @@ export function setStorage(key, value) {
 
 export function getStorage(key) {
     try {
-        return localStorage.getItem(key)
+        return localStorage.getItem(key);
     } catch {
         return undefined;
     }

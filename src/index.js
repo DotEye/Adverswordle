@@ -80,15 +80,31 @@ shareButtonElement.onchange = (event) => {
     shareButtonElement.selectedIndex = 0;
 };
 
-tooltipElement.onclick = (event) => {
+const tooltipHandler = (event) => {
+    tooltipPopupElement.querySelector('h2').tabIndex = 0;
+    tooltipPopupElement.querySelector('.done-button').tabIndex = 0;
     tooltipPopupElement.className = (tooltipPopupElement.className.includes('shown') ? 'hidden' : 'shown') + ' popup';
     event.stopPropagation();
 };
+tooltipElement.onclick = tooltipHandler;
+tooltipElement.onkeydown = event => {
+    if (event.key !== 'Enter') return;
+    tooltipHandler(event);
+    tooltipPopupElement.querySelector('h2').focus();
+}
 
-settingsButtonElement.onclick = (event) => {
+const settingsButtonElementHandler = (event) => {
+    highContrastModeElement.tabIndex = 0;
+    highContrastModeElement.parentElement.parentElement.nextElementSibling.tabIndex = 0;
     settingsPopupElement.className = (settingsPopupElement.className.includes('shown') ? 'hidden' : 'shown') + ' popup';
     event.stopPropagation();
 };
+settingsButtonElement.onclick = settingsButtonElementHandler;
+settingsButtonElement.onkeydown = event => {
+    if (event.key !== 'Enter') return;
+    settingsButtonElementHandler(event);
+    highContrastModeElement.focus();
+}
 
 document.body.onclick = hidePopups;
 
@@ -96,18 +112,33 @@ settingsPopupElement.onclick = (event) => {
     event.stopPropagation();
 };
 
-highContrastModeElement.onchange = () => {
+const highContrastModeHandler = () => {
     document.body.className = highContrastModeElement.checked ? 'high-contrast' : '';
     setStorage('high-contrast', highContrastModeElement.checked);
+};
+highContrastModeElement.onchange = highContrastModeHandler;
+highContrastModeElement.onkeydown = event => {
+    if (event.key !== 'Enter') return;
+    highContrastModeElement.checked = !highContrastModeElement.checked;
+    highContrastModeHandler();
 };
 
 whyDidILosePopupElement.onclick = (event) => {
     event.stopPropagation();
 };
 
-whyDidILosePopupButtonElement.onclick = (event) => {
+const whyDidILosePopupButtonHandler = (event) => {
+    whyDidILoseInputElement.tabIndex = 0;
+    whyDidILoseButtonElement.tabIndex = 0;
+    whyDidILosePopupElement.querySelector('.done-button').tabIndex = 0;
     whyDidILosePopupElement.className = (whyDidILosePopupElement.className.includes('shown') ? 'hidden' : 'shown') + ' popup';
     event.stopPropagation();
+};
+whyDidILosePopupButtonElement.onclick = whyDidILosePopupButtonHandler;
+whyDidILosePopupButtonElement.onkeydown = event => {
+    if (event.key !== 'Enter') return;
+    whyDidILosePopupButtonHandler(event);
+    whyDidILoseInputElement.focus();
 };
 
 whyDidILoseButtonElement.onclick = updateWhyDidILose;
