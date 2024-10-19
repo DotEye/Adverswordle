@@ -319,3 +319,18 @@ footer {
 .high-contrast .letter-green {
     color: #f3500f;
 }
+
+svg {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    transition: 350ms;
+}
+
+svg:hover {
+    transform: scale(1.1);
+}
+
+.eye-background {
+    filter: url(#glow) blur(1px);
+}
