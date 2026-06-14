@@ -11,7 +11,7 @@ Play here: https://adverswordle.doteye.online
 ### Running Locally
 
 1. Download or clone the repository and open a terminal in the repository root.
-2. Install [Node.js](https://nodejs.org/en) (v18) and [Yarn](https://yarnpkg.com).
+2. Install [Node.js](https://nodejs.org/en) (v24) and [Yarn](https://yarnpkg.com).
 3. Install node dependencies with `yarn`.
 4. Start the server with `yarn start`.
 5. Navigate to http://localhost:1234 in a web browser to view the site.

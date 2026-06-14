@@ -8,8 +8,8 @@
     "private": true,
     "type": "module",
     "dependencies": {
-        "jasmine": "^4.4.0",
-        "parcel": "^2.7.0",
+        "jasmine": "^6.3.0",
+        "parcel": "^2.16.4",
         "random-seed": "^0.3.0"
     },
     "scripts": {
@@ -18,7 +18,7 @@
         "test": "jasmine tests.js"
     },
     "devDependencies": {
-        "@parcel/packager-raw-url": "2.7.0",
-        "@parcel/transformer-webmanifest": "2.7.0"
+        "@parcel/packager-raw-url": "2.16.4",
+        "@parcel/transformer-webmanifest": "2.16.4"
     }
 }
